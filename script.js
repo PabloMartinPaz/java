@@ -1,56 +1,53 @@
-const pesoCajonVacio = 0.8;
-const gananciaFinal = 1.4;
-const gananciaReventa = 1.2;
-let pesoCajon  ;
-let precioCajon ;
-let producto;
-let costoKg;
-let precioVenta
-let id;
-const final = (pesoCajon,precioCajon) =>  (precioCajon / (pesoCajon - pesoCajonVacio) * gananciaFinal);
-const reventa = (pesoCajon,precioCajon) =>  (precioCajon / (pesoCajon - pesoCajonVacio) * gananciaReventa);
-class productos{
-    constructor(id, producto, pesoCajon, precioCajon, precioReventa, precioVenta){
-        this.id = id;
-        this.producto = producto
-        this.pesoCajon = pesoCajon
-        this.precioCajon = precioCajon
-        this.precioReventa = precioReventa = reventa
-        this.precioVenta = precioVenta = final
-
+class Producto {
+    constructor(articulo,costo,ganancia,venta,cantidad){
+        this.articulo = articulo;
+        this.costo = costo;
+        this.ganancia = ganancia;
+        this.venta = venta;
+        this.cantidad = cantidad;
     }
 }
-const productosGuardados= [];
+let productos = []
+let formProducto = document.querySelector ('#formProducto')
+let botonProductos = document.querySelector('#botonProductos')
+let divProductos = document.querySelector ('#divProductos')
 
-do {
-    productosGuardados.push (new productos())
-    id = prompt ("ingrese id del producto")
-    producto = prompt ("ingrese nombre del producto")
-    tipoCliente = prompt ("ingrese tipo de cliente");
+formProducto.addEventListener('submit', (event) => {
+    event.preventDefault()
+    console.log("Creaste un nuevo producto")
+    let articulo = document.querySelector ("#idArticulo").value
+    let costo = document.querySelector ("#idCosto").value
+    let ganancia = document.querySelector ("#idGanancia").value
+    let venta = document.querySelector ("#idCosto").value * (1+(document.querySelector ("#idGanancia").value)/100)
+    let cantidad = document.querySelector ("#idCantidad").value
+    document.getElementById('idPrecioventa').innerHTML = venta
+    const producto = new Producto (articulo,costo,ganancia,venta,cantidad)
+    productos.push(producto)
+    console.log(productos)
+    formProducto.reset ()
+})
 
-    pesoCajon = parseFloat(prompt ("ingrese peso total del cajon"));
-    precioCajon = parseFloat(prompt ("ingrese el costo del cajon"));
-    
-    if ( isNaN (pesoCajon) || isNaN (precioCajon) ){
-        alert ("ingrese un valor valido");
+botonProductos.addEventListener ('click',() =>{
+    productos.forEach((producto,indice) => {
+        divProductos.innerHTML += `
+        <div class="card text-white bg-primary mb-3" id="producto${indice}" style="max-width: 20rem;">
+  <div class="card-header">Productos</div>
+  <div class="card-body">
+    <h4 class="card-title">Articulo N° ${indice + 1}</h4>
+    <p class="card-text">Articulo${producto.articulo}</p>
+    <p class="card-text">Precio de costo${producto.costo}</p>
+    <p class="card-text">Porcentaje de ganancia %${producto.ganancia}</p>
+    <p class="card-text">Precio de venta ${producto.venta}</p>
+    <p class="card-text">Cantidad ${producto.cantidad}</p>
+  </div>
+  `
     }
-} while( isNaN(pesoCajon) || isNaN(precioCajon) )
- switch (tipoCliente) {
-     case "final":
-         alert (`el precio del kg de ${producto}  es $ ${final(pesoCajon, precioCajon)}`);
-         break
-    case "reventa":
-            alert (`el precio del kg de ${producto}  es $ ${reventa(pesoCajon, precioCajon)}`);
-            break
-             default:
-                alert ("ingrese un tipo valido de cliente");
-             
-                break    
-        
+    )
+}
+)
 
- }
-
-
-console.log (tipoCliente);
-console.log(precioVenta);
-console.log(productos)
+if (localStorage.getItem('productos')) {
+    productos = localStorage.getItem('productos')
+} else {
+    localStorage.setItem('productos', json.stringify(productos))
+}
